@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DGII.ItbisManagement.Application\DGII.ItbisManagement.Application.csproj" />
-    <ProjectReference Include="..\DGII.ItbisManagement.Domain\DGII.ItbisManagement.Domain.csproj" />
+    <ProjectReference Include="..\..\src\DGII.ItbisManagement.Application\DGII.ItbisManagement.Application.csproj" />
+    <ProjectReference Include="..\..\src\DGII.ItbisManagement.Domain\DGII.ItbisManagement.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
