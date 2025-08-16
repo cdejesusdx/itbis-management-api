@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using DGII.ItbisManagement.Domain.Entities;
-using DGII.ItbisManagement.Application.Interfaces;
 using DGII.ItbisManagement.Infrastructure.Persistence;
+using DGII.ItbisManagement.Application.Interfaces.Repositories;
 
 namespace DGII.ItbisManagement.Infrastructure.Repositories;
 

@@ -1,6 +1,6 @@
 ﻿using DGII.ItbisManagement.Domain.Entities;
 
-namespace DGII.ItbisManagement.Application.Interfaces
+namespace DGII.ItbisManagement.Application.Interfaces.Repositories
 {
     /// <summary>
     /// Repositorio para operaciones CRUD de comprobantes fiscales (facturas).
