@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-
-using DGII.ItbisManagement.Domain.Entities;
 using DGII.ItbisManagement.Application.DTOs;
+using DGII.ItbisManagement.Application.Mappings.Converters;
+using DGII.ItbisManagement.Domain.Entities;
 
 namespace DGII.ItbisManagement.Application.Mappings;
 
@@ -10,12 +10,23 @@ public sealed class ContributorProfile : Profile
 {
     public ContributorProfile()
     {
-        var conv = new EnumToSpanishConverters();
+        var enumToEs = new EnumToSpanishConverters();
+        var strToType = new StringToContributorTypeConverter();
+        var strToStatus = new StringToStatusConverter();
 
+        // Entity -> DTO
         CreateMap<Contributor, ContributorDto>()
-            .ForMember(d => d.TaxId, m => m.MapFrom(s => s.TaxId))
-            .ForMember(d => d.Name, m => m.MapFrom(s => s.Name))
-            .ForMember(d => d.Type, m => m.ConvertUsing(conv, s => s.Type))
-            .ForMember(d => d.Status, m => m.ConvertUsing(conv, s => s.Status));
+            .ForMember(d => d.Type, m => m.ConvertUsing(enumToEs, s => s.Type))
+            .ForMember(d => d.Status, m => m.ConvertUsing(enumToEs, s => s.Status));
+
+        // Create DTO -> Entity
+        CreateMap<ContributorCreateDto, Contributor>()
+            .ForMember(d => d.Type, m => m.ConvertUsing(strToType, s => s.Type))
+            .ForMember(d => d.Status, m => m.ConvertUsing(strToStatus, s => s.Status));
+
+        // Update DTO -> Entity
+        CreateMap<ContributorUpdateDto, Contributor>()
+            .ForMember(d => d.Type, m => m.ConvertUsing(strToType, s => s.Type))
+            .ForMember(d => d.Status, m => m.ConvertUsing(strToStatus, s => s.Status));
     }
 }

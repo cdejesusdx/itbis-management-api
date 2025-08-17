@@ -15,13 +15,14 @@ public class InvoiceRepository : IInvoiceRepository
     private readonly ItbisDbContext _context;
 
     /// <summary>Crea una nueva instancia del repositorio.</summary>
-    /// <param name="db">Contexto de datos de EF Core.</param>
+    /// <param name="context">Contexto de datos de EF Core.</param>
     public InvoiceRepository(ItbisDbContext context) => _context = context;
 
     /// <inheritdoc/>
     public async Task<IReadOnlyList<Invoice>> GetAllAsync(CancellationToken cancellationToken = default) =>
         await _context.Invoices
                  .AsNoTracking()
+                 .Include(i => i.Contributor)
                  .OrderBy(i => i.Ncf)
                  .ToListAsync(cancellationToken);
 
@@ -29,6 +30,7 @@ public class InvoiceRepository : IInvoiceRepository
     public async Task<IReadOnlyList<Invoice>> GetByContributorAsync(string taxId, CancellationToken cancellationToken = default) =>
         await _context.Invoices
                  .AsNoTracking()
+                 .Include(i => i.Contributor)
                  .Where(i => i.Contributor != null && i.Contributor.TaxId == taxId)
                  .OrderBy(i => i.Ncf)
                  .ToListAsync(cancellationToken);

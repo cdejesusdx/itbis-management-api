@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 
+using DGII.ItbisManagement.Domain.Entities;
 using DGII.ItbisManagement.Application.DTOs;
 using DGII.ItbisManagement.Application.Interfaces.Services;
 using DGII.ItbisManagement.Application.Interfaces.Repositories;
@@ -22,26 +23,68 @@ public class ContributorService : IContributorService
         _mapper = mapper;
     }
 
-    /// <summary>Obtiene todos los contribuyentes registrados.</summary>
+    /// <inheritdoc/>
     public async Task<IReadOnlyList<ContributorDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var contributors = await _contributorRepository.GetAllAsync(cancellationToken);
-        return _mapper.Map<IReadOnlyList<ContributorDto>>(contributors);
+        var entities = await _contributorRepository.GetAllAsync(cancellationToken);
+        return _mapper.Map<IReadOnlyList<ContributorDto>>(entities);
     }
 
-    /// <summary>Obtiene un contribuyente y sus comprobantes con el ITBIS total.</summary>
+    /// <inheritdoc/>
     public async Task<ContributorWithInvoicesDto?> GetWithInvoicesAsync(string taxId, CancellationToken cancellationToken = default)
     {
-        var contributor = await _contributorRepository.GetByIdAsync(taxId, cancellationToken);
-        if (contributor is null) return null;
+        var contrib = await _contributorRepository.GetByIdAsync(taxId, cancellationToken);
+        if (contrib is null) return null;
 
-        var invoices = await _invoiceRepository.GetByContributorAsync(taxId, cancellationToken);
-
+        var inv = await _invoiceRepository.GetByContributorAsync(taxId, cancellationToken);
         return new ContributorWithInvoicesDto
         {
-            Contributor = _mapper.Map<ContributorDto>(contributor),
-            Invoices = _mapper.Map<List<InvoiceDto>>(invoices),
-            TotalItbis = invoices.Sum(i => i.Itbis18)
+            Contributor = _mapper.Map<ContributorDto>(contrib),
+            Invoices = _mapper.Map<List<InvoiceDto>>(inv),
+            TotalItbis = inv.Sum(i => i.Itbis18)
         };
+    }
+
+    /// <inheritdoc/>
+    public async Task<ContributorDto?> GetAsync(string taxId, CancellationToken cancellationToken = default)
+    {
+        var entity = await _contributorRepository.GetByIdAsync(taxId, cancellationToken);
+        return entity is null ? null : _mapper.Map<ContributorDto>(entity);
+    }
+
+    /// <inheritdoc/>
+    public async Task<ContributorDto> CreateAsync(ContributorCreateDto dto, CancellationToken cancellationToken = default)
+    {
+        // Validar duplicado por TaxId
+        var exists = await _contributorRepository.GetByIdAsync(dto.TaxId, cancellationToken);
+        if (exists is not null)
+            throw new InvalidOperationException($"Ya existe el contribuyente con RNC/Cédula {dto.TaxId}");
+
+        var entity = _mapper.Map<Contributor>(dto);
+        await _contributorRepository.AddAsync(entity, cancellationToken);
+
+        return _mapper.Map<ContributorDto>(entity);
+    }
+
+    /// <inheritdoc/>
+    public async Task<ContributorDto?> UpdateAsync(string taxId, ContributorUpdateDto dto, CancellationToken cancellationToken = default)
+    {
+        var entity = await _contributorRepository.GetByIdAsync(taxId, cancellationToken);
+        if (entity is null) return null;
+
+        _mapper.Map(dto, entity);
+        await _contributorRepository.UpdateAsync(entity, cancellationToken);
+
+        return _mapper.Map<ContributorDto>(entity);
+    }
+
+    /// <inheritdoc/>
+    public async Task<bool> DeleteAsync(string taxId, CancellationToken cancellationToken = default)
+    {
+        var entity = await _contributorRepository.GetByIdAsync(taxId, cancellationToken);
+        if (entity is null) return false;
+
+        await _contributorRepository.DeleteAsync(taxId, cancellationToken);
+        return true;
     }
 }

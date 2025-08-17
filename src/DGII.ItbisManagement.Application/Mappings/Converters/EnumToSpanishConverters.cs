@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-
 using DGII.ItbisManagement.Domain.Enums;
 
-namespace DGII.ItbisManagement.Application.Mappings;
+namespace DGII.ItbisManagement.Application.Mappings.Converters;
 
-/// <summary>Conversores de enums a texto en español.</summary>
+/// <summary>Convertidores de enums a texto en español.</summary>
 public sealed class EnumToSpanishConverters :
     IValueConverter<ContributorType, string>,
     IValueConverter<Status, string>
