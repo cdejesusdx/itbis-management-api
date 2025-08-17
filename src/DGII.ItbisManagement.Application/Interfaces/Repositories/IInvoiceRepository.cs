@@ -32,7 +32,7 @@ namespace DGII.ItbisManagement.Application.Interfaces.Repositories
         Task<Invoice?> GetAsync(string taxId, string ncf, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Inserta un nuevo comprobante fiscal.
+        /// Crea un nuevo comprobante fiscal.
         /// </summary>
         /// <param name="invoice">Entidad a insertar.</param>
         /// <param name="cancellationToken">Token de cancelación.</param>

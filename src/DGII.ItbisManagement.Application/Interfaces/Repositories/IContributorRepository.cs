@@ -24,7 +24,7 @@ namespace DGII.ItbisManagement.Application.Interfaces.Repositories
         Task<Contributor?> GetByIdAsync(string taxId, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Inserta un nuevo contribuyente.
+        /// Crea un nuevo contribuyente.
         /// </summary>
         /// <param name="contributor">Entidad a agregar.</param>
         /// <param name="cancellationToken">Token de cancelación.</param>
