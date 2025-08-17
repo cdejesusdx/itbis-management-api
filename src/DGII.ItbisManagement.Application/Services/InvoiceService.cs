@@ -87,16 +87,20 @@ public class InvoiceService(IInvoiceRepository invoiceRepository, IContributorRe
             var newInvoice = new Invoice
             {
                 ContributorId = contributor.Id,
-                Contributor = contributor,
+                Contributor = null,
                 Ncf = dto.Ncf,
                 Amount = dto.Amount,
-                Itbis18 = dto.Itbis18
+                Itbis18 = dto.Itbis18,
+                CreateBy = "System",
+                Created = DateTime.UtcNow,
             };
 
             await _invoiceRepository.AddAsync(newInvoice, cancellationToken);
             _logger.LogInformation("Comprobante {TaxId}-{NCF} creado", dto.TaxId, dto.Ncf);
 
-            return _mapper.Map<InvoiceDto>(newInvoice);
+            // recargar con Include para mapear TaxId desde la navegación
+            var resultInvoice = await _invoiceRepository.GetAsync(dto.TaxId, dto.Ncf, cancellationToken);
+            return _mapper.Map<InvoiceDto>(resultInvoice);
         }
         catch (Exception ex)
         {
@@ -115,6 +119,8 @@ public class InvoiceService(IInvoiceRepository invoiceRepository, IContributorRe
 
             invoice.Amount = dto.Amount;
             invoice.Itbis18 = dto.Itbis18;
+            invoice.UpdateBy = "System";
+            invoice.Updated = DateTime.UtcNow;
 
             await _invoiceRepository.UpdateAsync(invoice, cancellationToken);
 

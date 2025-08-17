@@ -85,6 +85,9 @@ public class ContributorService(IContributorRepository contributorRepository,
             }
 
             var contributor = _mapper.Map<Contributor>(dto);
+            contributor.CreateBy = "System";
+            contributor.Created = DateTime.UtcNow;
+
             await _contributorRepository.AddAsync(contributor, cancellationToken);
 
             return _mapper.Map<ContributorDto>(contributor);
@@ -104,6 +107,8 @@ public class ContributorService(IContributorRepository contributorRepository,
             var contributor = await _contributorRepository.GetByIdAsync(taxId, cancellationToken);
             if (contributor is null) return null;
 
+            contributor.UpdateBy = "System";
+            contributor.Updated = DateTime.UtcNow;
             _mapper.Map(dto, contributor);
             await _contributorRepository.UpdateAsync(contributor, cancellationToken);
 

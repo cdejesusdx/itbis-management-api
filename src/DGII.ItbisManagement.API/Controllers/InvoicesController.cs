@@ -32,7 +32,7 @@ public class InvoicesController(IInvoiceService invoiceService, ILogger<Invoices
     }
 
     /// <summary>Obtiene un comprobante por RNC/Cédula y NCF.</summary>
-    [HttpGet("{taxId}/{ncf}")]
+    [HttpGet("{taxId}/{ncf}", Name = "GetInvoiceByTaxIdAndNcf")]
     [ProducesResponseType(typeof(InvoiceDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAsync(string taxId, string ncf, CancellationToken cancellationToken)
@@ -78,7 +78,7 @@ public class InvoicesController(IInvoiceService invoiceService, ILogger<Invoices
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
             
             var result = await _invoiceService.CreateAsync(dto, cancellationToken);
-            return CreatedAtAction(nameof(GetAsync), new { taxId = result.TaxId, ncf = result.Ncf }, result);
+            return CreatedAtRoute("GetInvoiceByTaxIdAndNcf", new { taxId = dto.TaxId, ncf = result.Ncf }, result);
         }
         catch (InvalidOperationException ex)
         {

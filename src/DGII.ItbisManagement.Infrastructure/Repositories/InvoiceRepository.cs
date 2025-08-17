@@ -63,6 +63,7 @@ public class InvoiceRepository(ItbisDbContext context, ILogger<InvoiceRepository
         {
             return _context.Invoices
                    .AsNoTracking()
+                   .Include(i => i.Contributor)
                    .FirstOrDefaultAsync(i => i.Contributor != null &&
                                      i.Contributor.TaxId == taxId &&
                                      i.Ncf == ncf, cancellationToken);

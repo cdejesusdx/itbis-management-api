@@ -31,7 +31,7 @@ public class ContributorsController(IContributorService contributorService, ILog
     }
 
     /// <summary>Obtiene un contribuyente por RNC/Cédula.</summary>
-    [HttpGet("{taxId}")]
+    [HttpGet("{taxId}", Name = "GetContributorByTaxId")]
     [ProducesResponseType(typeof(ContributorDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAsync(string taxId, CancellationToken cancellationToken)
@@ -105,7 +105,7 @@ public class ContributorsController(IContributorService contributorService, ILog
                 return ValidationProblem(ModelState);
 
             var result = await _contributorService.CreateAsync(dto, cancellationToken);
-            return CreatedAtAction(nameof(GetAsync), new { taxId = result.TaxId }, result);
+            return CreatedAtRoute("GetContributorByTaxId", new { taxId = result.TaxId }, result);
         }
         catch (InvalidOperationException ex)
         {
