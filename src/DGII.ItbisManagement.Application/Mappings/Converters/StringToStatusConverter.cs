@@ -11,11 +11,12 @@ public sealed class StringToStatusConverter : IValueConverter<string, Status>
     public Status Convert(string sourceMember, ResolutionContext context)
     {
         var s = (sourceMember ?? string.Empty).Trim().ToLowerInvariant();
+
         return s switch
         {
             "activo" => Status.Active,
             "inactivo" => Status.Inactive,
-            _ => throw new AutoMapperMappingException($"Estatus inválido: '{sourceMember}'")
+            _ => throw new ArgumentException($"Estatus no válido: '{sourceMember}'.")
         };
     }
 }
