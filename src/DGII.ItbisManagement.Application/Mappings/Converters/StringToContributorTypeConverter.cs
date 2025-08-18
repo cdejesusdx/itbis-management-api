@@ -10,12 +10,15 @@ public sealed class StringToContributorTypeConverter : IValueConverter<string, C
 {
     public ContributorType Convert(string sourceMember, ResolutionContext context)
     {
-        var s = (sourceMember ?? string.Empty).Trim().ToUpperInvariant();
+        var s = (sourceMember ?? string.Empty).Trim().ToLowerInvariant();
+
         return s switch
         {
-            "PERSONA FISICA" => ContributorType.Individual,
-            "PERSONA JURIDICA" => ContributorType.LegalEntity,
-            _ => throw new AutoMapperMappingException($"Tipo de contribuyente inválido: '{sourceMember}'")
+            "persona fisica" => ContributorType.Individual,
+            "persona física" => ContributorType.Individual,
+            "persona juridica" => ContributorType.LegalEntity,
+            "persona jurídica" => ContributorType.LegalEntity,
+            _ => throw new ArgumentException($"Tipo de contribuyente no válido: '{sourceMember}'.")
         };
     }
 }
